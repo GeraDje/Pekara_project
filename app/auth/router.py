@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.auth.authen import hash_password, create_access_token
+from app.auth.authen import hash_password, create_access_token, create_refresh_token
 from app.auth.dao import UserDAO
 from app.auth.dependencies import validate_auth_user, get_current_active_auth_user
 from app.auth.schemas import UserRegSchema, UserSchema, TokenInfo
@@ -23,8 +23,10 @@ async def auth_user_issue_jwt(
         user: UserSchema = Depends(validate_auth_user),
 ):
     access_token = create_access_token(user)
+    refresh_token = create_refresh_token(user)
     return TokenInfo(
         access_token=access_token,
+        refresh_token=refresh_token,
         token_type="Bearer"
     )
 
