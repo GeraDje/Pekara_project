@@ -11,12 +11,12 @@ class Receipts(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # Уникальный идентификатор чека
     total_amount: Mapped[int]  # Общая сумма чека
-    received_amount: Mapped[int]  # Сумма, полученная от покупателя
-    change: Mapped[int]  # Сдача
+    received_amount: Mapped[int | None]  # Сумма, полученная от покупателя
+    change: Mapped[int | None]  # Сдача
     created_at:Mapped[datetime]=mapped_column(server_default=text('TIMEZONE("utc", NOW())')) # Время создания чека
+    user_id = mapped_column(ForeignKey("users.id", ondelete="SET NULL")) # кто продал
 
 
-    user_id = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     products: Mapped[list["Products"]] = relationship(back_populates="receipts",
                                                       secondary="receipt_items",
                                                       lazy='joined')
@@ -31,7 +31,7 @@ class ReceiptItems(Base):
     receipt_id: Mapped[int] = mapped_column(ForeignKey("receipts.id"), primary_key=True)  # Ссылка на чек
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"), primary_key=True)  # Ссылка на продукт
     quantity: Mapped[int]  # Количество продукта
-    price: Mapped[int]
+    price: Mapped[int] #соимость
 
     # # Связи между таблицами
     receipts: Mapped["Receipts"] = relationship(back_populates="receipt_to_products", overlaps="products, receipts")
