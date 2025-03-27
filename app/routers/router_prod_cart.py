@@ -1,30 +1,28 @@
-from fastapi import  Request, Form, APIRouter
+from fastapi import  Request, Form, APIRouter, HTTPException,status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import List, Optional
 from app.dao.productsdao import ProductsDAO
 from app.dao.recieptsdao import ReceiptItemDAO, ReceiptsDAO
 
-
 router = APIRouter()
 
 templates = Jinja2Templates(directory="app/templates")
-#
+
 # Работающий код
 @router.post("/cart", response_class=HTMLResponse)
 async def cart(
         request: Request,
         product_ids: Optional[List[int]] = Form(...),
-        quantities: Optional[List[int]] = Form(...)
+        quantities: Optional[List[int]] = Form(...),
+        recieved_amounts: Optional[int] = Form(...),
                ):
-
     cart_items = []
     total_price = 0
     if product_ids and quantities:
         try:
             products = await ProductsDAO.find_all()
             products_dict = {p['id']: p for p in products}
-            # print(f"=============products_dict{products_dict}================")
 
             for product_id, quantity in zip(product_ids, quantities):
                 if quantity > 0:
@@ -41,8 +39,11 @@ async def cart(
                             'item_total': item_total,
 
                         })
-            # print(f"=============cart_items: {cart_items}================")
-            await ReceiptsDAO.add(total_amount=total_price)
+            if recieved_amounts >0  and recieved_amounts>total_price:
+                change= recieved_amounts-total_price
+            else:
+                change=0
+            await ReceiptsDAO.add(total_amount=total_price,received_amount=recieved_amounts,change=change)
             max_id = await ReceiptsDAO.get_max_id()
             for cart_item in cart_items:
                 await ReceiptItemDAO.add(
@@ -63,8 +64,12 @@ async def cart(
             "request": request,
             "cart_items": cart_items,
             "total_price": total_price,
+            "recieved_amounts":recieved_amounts,
+            "changes":change,
+
          }
     )
+
 
 
 
@@ -72,6 +77,7 @@ async def cart(
 @router.get("/products", response_class=HTMLResponse)
 async def index(
         request: Request,
+        
         ):
     return templates.TemplateResponse(
         "products.html",

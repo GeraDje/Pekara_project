@@ -4,7 +4,11 @@
     <title>Корзина</title>
 </head>
 <body>
+
     <h1>Корзина</h1>
+    <p>Общая стоимость: {{ total_price }}</p>
+<p>Получено от покупателя: {{ recieved_amounts }}</p>
+<p>Сдача: {{ changes }}</p>
     {% if cart_items %}
         <table>
             <thead>
@@ -33,5 +37,6 @@
     {% else %}
         <p>Корзина пуста.</p>
     {% endif %}
-</body>
+    </body>
 </html>
+
