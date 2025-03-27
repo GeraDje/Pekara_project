@@ -3,10 +3,10 @@ from fastapi import Form, HTTPException
 from fastapi.params import Depends
 from starlette import status
 from app.auth.authen import validate_password, decode_jwt
-from app.auth.dao import UserDAO
-from app.auth.schemas import UserSchema
+from app.dao.usersdao import UserDAO
+from app.shemas.schemas import UserSchema
 from app.exeptions import Noactive
-from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 http_bearer = HTTPBearer()
 # oauth2_scheme = OAuth2PasswordBearer(

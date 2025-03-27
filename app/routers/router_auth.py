@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from app.auth.authen import hash_password, create_access_token, create_refresh_token
-from app.auth.dao import UserDAO
+from app.dao.usersdao import UserDAO
 from app.auth.dependencies import validate_auth_user, get_current_active_auth_user
-from app.auth.schemas import UserRegSchema, UserSchema, TokenInfo
+from app.shemas.schemas import UserRegSchema, UserSchema, TokenInfo
 from app.exeptions import UserAlreadyExistsException
 
 router_auth = APIRouter(

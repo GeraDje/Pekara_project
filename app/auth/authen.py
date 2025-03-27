@@ -1,7 +1,7 @@
 from datetime import timedelta, datetime
 import jwt
 import bcrypt
-from app.auth.schemas import UserSchema
+from app.shemas.schemas import UserSchema
 from app.config import settings
 
 def encode_jwt(
