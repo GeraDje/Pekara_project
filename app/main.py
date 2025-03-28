@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers.router_auth import router_auth
-from app.routers.router_prod_cart import router as router_cas
+
+from app.routers.router_sale import router as router_proba
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -13,4 +16,6 @@ app.add_middleware(
 )
 
 app.include_router(router_auth)
-app.include_router(router_cas)
+# app.include_router(router_cas)
+
+app.include_router(router_proba)

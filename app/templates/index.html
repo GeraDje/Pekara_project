@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Корзина</title>
+</head>
+<body>
+    <h1>Корзина</h1>
+    <form id="cartForm" method="post" action="/submit">
+        <button type="button" id="resetButton">НОВАЯ ПОКУПКА</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr class="item" data-product-id="{{ product.id }}">
+                    <td class="name">{{ product.name }}</td>
+                    <td class="price">{{ product.price }}</td>
+                    <td><label>
+                        <input type="number" class="quantity" value="0" min="0" inputmode="numeric">
+                    </label></td>
+                    <td class="item-total">{{ product.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>Итого: <span id="total">0</span></p>
+        <label for="receivedAmount">Получено от покупателя:</label>
+        <input type="number" id="receivedAmount" name="receivedAmount" value="0" min="0" inputmode="numeric"><br><br>
+        <p>Сдача: <span id="change">0</span></p>
+        <button type="submit">Оформить заказ</button>
+
+    </form>
+
+    <script>
+        const quantityInputs = document.querySelectorAll('.quantity');
+        quantityInputs.forEach(input => {
+            input.addEventListener('change', calculateTotal);
+        });
+
+        const receivedAmountInput = document.getElementById('receivedAmount');
+        receivedAmountInput.addEventListener('change', calculateChange);
+
+        function calculateTotal() {
+            let total = 0;
+            const items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                const price = parseInt(item.querySelector('.price').textContent);
+                const quantity = parseInt(item.querySelector('.quantity').value);
+                const itemTotal = price * quantity;
+                item.querySelector('.item-total').textContent = itemTotal;
+                total += itemTotal;
+            });
+            document.getElementById('total').textContent = total;
+            calculateChange();
+        }
+
+        function calculateChange() {
+            const total = parseInt(document.getElementById('total').textContent);
+            const receivedAmount = parseInt(document.getElementById('receivedAmount').value);
+            let change = 0;
+            if (receivedAmount >= total) {
+                change = receivedAmount - total;
+                            }
+            document.getElementById('change').textContent = change;
+        }
+        document.getElementById('resetButton').addEventListener('click', function() {
+            const quantityInputs = document.querySelectorAll('.quantity');
+            quantityInputs.forEach(input => {
+                input.value = 0;
+            });
+            document.getElementById('receivedAmount').value = 0;
+            calculateTotal();
+        });
+        document.getElementById('cartForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const items = [];
+            document.querySelectorAll('.item').forEach(item => {
+                items.push({
+                    product_id: parseInt(item.dataset.productId),
+                    quantity: parseInt(item.querySelector('.quantity').value),
+                    item_total: parseInt(item.querySelector('.item-total').textContent)
+                });
+            });
+            const total = parseInt(document.getElementById('total').textContent);
+            const receivedAmount = parseInt(document.getElementById('receivedAmount').value);
+            const change = parseInt(document.getElementById('change').textContent);
+            fetch('/sale', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ items: items, total: total, receivedAmount: receivedAmount, change: change })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data));
+        });
+
+        calculateTotal();
+    </script>
+</body>
+</html>
