@@ -11,5 +11,7 @@ app.add_middleware(
     allow_methods=["*"],  # Разрешить все методы
     allow_headers=["*"],  # Разрешить все заголовки
 )
-app.include_router(router_proba)
+
+
 app.include_router(router_auth)
+app.include_router(router_proba)
