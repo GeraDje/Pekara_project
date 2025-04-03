@@ -13,12 +13,14 @@ keycloak_openid = KeycloakOpenID(server_url=settings.KEYCLOAK_URL,
                                   client_id=settings.KEYCLOAK_CLIENT_ID,
                                   realm_name=settings.KEYCLOAK_REALM)
 
-keycloak_admin = KeycloakAdmin(server_url=settings.KEYCLOAK_URL,
-                                username=settings.KEYCLOAK_ADMIN_USERNAME,
-                                password=settings.KEYCLOAK_ADMIN_PASSWORD,
-                                realm_name=settings.KEYCLOAK_REALM,
-                                client_id=settings.KEYCLOAK_CLIENT_ID,
-                                verify=True)
+keycloak_admin = KeycloakAdmin(
+    server_url="http://localhost:8080/",  # Без /auth
+    username="admin",
+    password="admin",
+    client_id=settings.KEYCLOAK_CLIENT_ID,
+    realm_name=settings.KEYCLOAK_REALM,
+    client_secret_key=settings.KEYCLOAK_CLIENT_SECRET,
+    verify=False)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -41,9 +43,9 @@ async def registracia(user_data:UserCreate):
                         "temporary": False  # Устанавливаем временный пароль в False
                     }]
                 })
+                await create_user(user_data)
             except Exception as e:
                 print(f"Ошибка при подключении к Keycloak: {e}")
-            await create_user(user_data)
             return {"msg": "User registered successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
