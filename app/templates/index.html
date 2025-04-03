@@ -90,7 +90,7 @@
             const total = parseInt(document.getElementById('total').textContent);
             const receivedAmount = parseInt(document.getElementById('receivedAmount').value);
             const change = parseInt(document.getElementById('change').textContent);
-            fetch('/sale', {
+            fetch('/cass/sale', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

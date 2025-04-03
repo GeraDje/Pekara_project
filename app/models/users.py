@@ -13,7 +13,8 @@ class Users(Base):
     id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True) #уникальный инд
     name: Mapped[str] #имя пользователя
     email: Mapped[str]
-    hashed_password: Mapped[bytes] = mapped_column(LargeBinary)
+    # hashed_password: Mapped[bytes] = mapped_column(LargeBinary)
+    hashed_password: Mapped[str]
     role_id: Mapped[Optional[int]] = mapped_column(ForeignKey('roles.id')) #роль
 
     role = relationship('Roles', back_populates='user')

@@ -1,42 +1,14 @@
-from fastapi import APIRouter, Depends
-from app.auth.authen import hash_password, create_access_token, create_refresh_token
-from app.dao.usersdao import UserDAO
-from app.auth.dependencies import validate_auth_user, get_current_active_auth_user
-from app.shemas.schemas import UserRegSchema, UserSchema, TokenInfo
+from fastapi import APIRouter
+from app.authenticator.crud import get_user_by_email, create_user
 from app.exeptions import UserAlreadyExistsException
+from app.shemas.schemas import UserCreate
 
-router_auth = APIRouter(
-    prefix='/auth',
-    tags=['Аутентификация и Авторизация']
-)
+router = APIRouter(prefix="/auth", tags=["Авторизация и аунтификация"])
 
-@router_auth.post('/register')
-async def register_user(user_data:UserRegSchema):
-    existing_user = await UserDAO.find_one_or_none(email=user_data.email)
-    if existing_user:
+@router.post("/registration", )
+async def registracia(user_data:UserCreate):
+    new_user = await get_user_by_email(user_data.email)
+    if new_user:
         raise UserAlreadyExistsException
-    hashed_password = (hash_password(user_data.password))
-    await UserDAO.add(name=user_data.name, email=user_data.email, hashed_password=hashed_password)
+    await create_user(user_data)
 
-@router_auth.post("/login", response_model=TokenInfo)
-async def auth_user_issue_jwt(
-        user: UserSchema = Depends(validate_auth_user),
-):
-    access_token = create_access_token(user)
-    refresh_token = create_refresh_token(user)
-    return TokenInfo(
-        access_token=access_token,
-        refresh_token=refresh_token,
-        token_type="Bearer"
-    )
-
-
-@router_auth.get("/users/me/")
-async def auth_user_check_self_info(
-    user: UserSchema = Depends(get_current_active_auth_user),
-):
-    return {
-        "sub": user.id,
-        "name": user.name,
-        "email": user.email,
-    }

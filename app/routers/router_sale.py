@@ -3,9 +3,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from app.dao.productsdao import ProductsDAO
 from app.dao.recieptsdao import ReceiptsDAO, ReceiptItemDAO
-from app.shemas.schemas import Order, UserSchema
+from app.shemas.schemas import Order
 
-router = APIRouter()
+router = APIRouter(prefix="/cass", tags=["Касса"])
 templates = Jinja2Templates(directory="app/templates")
 
 

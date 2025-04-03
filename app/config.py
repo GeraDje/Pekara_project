@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
+    KEYCLOAK_URL: str
+    KEYCLOAK_REALM: str
+    KEYCLOAK_CLIENT_ID: str
+    KEYCLOAK_CLIENT_SECRET: str
+    KEYCLOAK_ADMIN_USERNAME: str
+    KEYCLOAK_ADMIN_PASSWORD: str
+    CALLBACK_URI: str
 
 
 

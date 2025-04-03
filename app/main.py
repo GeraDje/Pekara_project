@@ -1,10 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-
-from app.routers.router_auth import router_auth
-
 from app.routers.router_sale import router as router_proba
-
+from app.routers.router_auth import router as router_auth
 
 app = FastAPI()
 app.add_middleware(
@@ -14,8 +11,5 @@ app.add_middleware(
     allow_methods=["*"],  # Разрешить все методы
     allow_headers=["*"],  # Разрешить все заголовки
 )
-
-app.include_router(router_auth)
-# app.include_router(router_cas)
-
 app.include_router(router_proba)
+app.include_router(router_auth)
