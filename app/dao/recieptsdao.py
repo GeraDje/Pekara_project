@@ -1,4 +1,5 @@
-from sqlalchemy import insert,text
+from mako.compat import win32
+from sqlalchemy import insert,text, select,func
 
 from app.dao.basedao import BaseDAO
 from app.database import async_session_maker
@@ -27,3 +28,21 @@ class ReceiptsDAO(BaseDAO):
             except Exception as e:
                 print(f"Ошибка при получении максимального ID: {e}")
                 return None
+
+
+    # @classmethod
+    # async def add(cls, **data):
+    #     async with async_session_maker() as session:
+    #         query = insert(cls.model).values(**data).returning(cls.model.id)
+    #         result = await session.execute(query)
+    #         inserted_id = result.scalar()  # Получаем ID из результата
+    #         return inserted_id
+
+
+    # @classmethod
+    # async def get_max_id(cls):
+    #     async with async_session_maker() as session:
+    #         result = await session.execute(
+    #             select(func.max(cls.model.id))
+    #         )
+    #         return result.scalar()

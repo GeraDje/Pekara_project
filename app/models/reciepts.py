@@ -17,19 +17,21 @@ class Receipts(Base):
     user_id = mapped_column(ForeignKey("users.id", ondelete="SET NULL")) # кто продал
 
 
+
+
     products: Mapped[list["Products"]] = relationship(back_populates="receipts",
                                                       secondary="receipt_items",
                                                       lazy='joined')
     user: Mapped["Users"] = relationship(back_populates="receipts", lazy='joined')
-    receipt_to_products: Mapped[list["ReceiptItems"]] = relationship(back_populates="receipts", viewonly=True)
+    receipt_to_products: Mapped["ReceiptItems"] = relationship(back_populates="receipts", viewonly=True)
 
 
 class ReceiptItems(Base):
     __tablename__ = "receipt_items"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # Уникальный идентификатор позиции
-    receipt_id: Mapped[int] = mapped_column(ForeignKey("receipts.id"), primary_key=True)  # Ссылка на чек
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"), primary_key=True)  # Ссылка на продукт
+    receipt_id: Mapped[int] = mapped_column(ForeignKey("receipts.id"))  # Ссылка на чек
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))# Ссылка на продукт
     quantity: Mapped[int]  # Количество продукта
     price: Mapped[int] #стоимость
 

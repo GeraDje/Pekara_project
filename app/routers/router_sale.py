@@ -26,3 +26,4 @@ async def create_sale(order: Order):
                 quantity=i.quantity,
                 price= i.item_total,
                             )
+
