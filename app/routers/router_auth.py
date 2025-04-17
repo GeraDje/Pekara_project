@@ -1,5 +1,6 @@
 from fastapi import APIRouter,HTTPException,status
 from app.authenticator.crud import get_password_hash
+from app.authenticator.keycloak_auth import register_user
 from app.dao.usersdao import UserDAO
 from app.exeptions import UserAlreadyExistsException
 from app.schemas.user import UserCreate
@@ -7,7 +8,7 @@ from app.schemas.user import UserCreate
 router = APIRouter(tags=["auth"], prefix="/auth")
 
 @router.post('/register')
-async def register_user(user_data: UserCreate):
+async def register(user_data: UserCreate):
     existing_user = await UserDAO.find_one_or_none(email=user_data.email)
     if existing_user:
         raise UserAlreadyExistsException

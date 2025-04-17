@@ -20,6 +20,8 @@ keycloak_admin = KeycloakAdmin(
     username=settings.KEYCLOAK_ADMIN_USER,
     password=settings.KEYCLOAK_ADMIN_PASSWORD,
     realm_name=settings.KEYCLOAK_REALM,
+    client_id=settings.KEYCLOAK_CLIENT_ID,
+    client_secret_key=settings.KEYCLOAK_CLIENT_SECRET,
     verify=True
 )
 
