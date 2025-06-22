@@ -70,3 +70,5 @@ class ReceiptsDAO(BaseDAO):
                 print(f"Ошибка при получении суммы за неделю: {e}")
                 return None
 
+
+
