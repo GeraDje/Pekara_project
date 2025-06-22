@@ -1,8 +1,8 @@
-"""test
+"""create tables
 
-Revision ID: 2c1cb432ef0b
-Revises: 611806752261
-Create Date: 2025-04-02 13:00:03.338585
+Revision ID: b728f0fda91b
+Revises: 697fce5ca57e
+Create Date: 2025-06-22 14:34:52.976459
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2c1cb432ef0b'
-down_revision: Union[str, None] = '611806752261'
+revision: str = 'b728f0fda91b'
+down_revision: Union[str, None] = '697fce5ca57e'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -46,7 +46,7 @@ def upgrade() -> None:
     sa.Column('total_amount', sa.Integer(), nullable=False),
     sa.Column('received_amount', sa.Integer(), nullable=True),
     sa.Column('change', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
@@ -59,7 +59,7 @@ def upgrade() -> None:
     sa.Column('price', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
     sa.ForeignKeyConstraint(['receipt_id'], ['receipts.id'], ),
-    sa.PrimaryKeyConstraint('id', 'receipt_id', 'product_id')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 

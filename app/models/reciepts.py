@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from sqlalchemy import ForeignKey, Date, text
+from sqlalchemy import ForeignKey, Date, text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -13,7 +13,7 @@ class Receipts(Base):
     total_amount: Mapped[int]  # Общая сумма чека
     received_amount: Mapped[int | None]  # Сумма, полученная от покупателя
     change: Mapped[int | None]  # Сдача
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow) # Время создания чека
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now()) # Время создания чека
     user_id = mapped_column(ForeignKey("users.id", ondelete="SET NULL")) # кто продал
 
 

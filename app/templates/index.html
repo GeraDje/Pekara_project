@@ -1,7 +1,258 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="ru">-->
+<!--<head>-->
+<!--    <title>Корзина</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>Корзина</h1>-->
+<!--    <form id="cartForm" method="post" action="/submit">-->
+<!--        <button type="button" id="resetButton">НОВАЯ ПОКУПКА</button>-->
+<!--        <table>-->
+<!--            <thead>-->
+<!--                <tr>-->
+<!--                    <th>Название</th>-->
+<!--                    <th>Цена</th>-->
+<!--                    <th>Количество</th>-->
+<!--                    <th>Сумма</th>-->
+<!--                </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--                {% for product in products %}-->
+<!--                <tr class="item" data-product-id="{{ product.id }}">-->
+<!--                    <td class="name">{{ product.name }}</td>-->
+<!--                    <td class="price">{{ product.price }}</td>-->
+<!--                    <td><label>-->
+<!--                        <input type="number" class="quantity" value="0" min="0" inputmode="numeric">-->
+<!--                    </label></td>-->
+<!--                    <td class="item-total">{{ product.price }}</td>-->
+<!--                </tr>-->
+<!--                {% endfor %}-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--        <p>Итого: <span id="total">0</span></p>-->
+<!--        <label for="receivedAmount">Получено от покупателя:</label>-->
+<!--        <input type="number" id="receivedAmount" name="receivedAmount" value="0" min="0" inputmode="numeric"><br><br>-->
+<!--        <p>Сдача: <span id="change">0</span></p>-->
+<!--        <button type="submit">Оформить заказ</button>-->
+
+<!--    </form>-->
+
+<!--    <script>-->
+<!--        const quantityInputs = document.querySelectorAll('.quantity');-->
+<!--        quantityInputs.forEach(input => {-->
+<!--            input.addEventListener('change', calculateTotal);-->
+<!--        });-->
+
+<!--        const receivedAmountInput = document.getElementById('receivedAmount');-->
+<!--        receivedAmountInput.addEventListener('change', calculateChange);-->
+
+<!--        function calculateTotal() {-->
+<!--            let total = 0;-->
+<!--            const items = document.querySelectorAll('.item');-->
+<!--            items.forEach(item => {-->
+<!--                const price = parseInt(item.querySelector('.price').textContent);-->
+<!--                const quantity = parseInt(item.querySelector('.quantity').value);-->
+<!--                const itemTotal = price * quantity;-->
+<!--                item.querySelector('.item-total').textContent = itemTotal;-->
+<!--                total += itemTotal;-->
+<!--            });-->
+<!--            document.getElementById('total').textContent = total;-->
+<!--            calculateChange();-->
+<!--        }-->
+
+<!--        function calculateChange() {-->
+<!--            const total = parseInt(document.getElementById('total').textContent);-->
+<!--            const receivedAmount = parseInt(document.getElementById('receivedAmount').value);-->
+<!--            let change = 0;-->
+<!--            if (receivedAmount >= total) {-->
+<!--                change = receivedAmount - total;-->
+<!--                            }-->
+<!--            document.getElementById('change').textContent = change;-->
+<!--        }-->
+<!--        document.getElementById('resetButton').addEventListener('click', function() {-->
+<!--            const quantityInputs = document.querySelectorAll('.quantity');-->
+<!--            quantityInputs.forEach(input => {-->
+<!--                input.value = 0;-->
+<!--            });-->
+<!--            document.getElementById('receivedAmount').value = 0;-->
+<!--            calculateTotal();-->
+<!--        });-->
+<!--        document.getElementById('cartForm').addEventListener('submit', function(event) {-->
+<!--            event.preventDefault();-->
+<!--            const items = [];-->
+<!--            document.querySelectorAll('.item').forEach(item => {-->
+<!--                items.push({-->
+<!--                    product_id: parseInt(item.dataset.productId),-->
+<!--                    quantity: parseInt(item.querySelector('.quantity').value),-->
+<!--                    item_total: parseInt(item.querySelector('.item-total').textContent)-->
+<!--                });-->
+<!--            });-->
+<!--            const total = parseInt(document.getElementById('total').textContent);-->
+<!--            const receivedAmount = parseInt(document.getElementById('receivedAmount').value);-->
+<!--            const change = parseInt(document.getElementById('change').textContent);-->
+<!--            fetch('/cass/sale', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json'-->
+<!--                },-->
+<!--                body: JSON.stringify({ items: items, total: total, receivedAmount: receivedAmount, change: change })-->
+<!--            })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => console.log(data));-->
+<!--        });-->
+
+<!--        calculateTotal();-->
+<!--    </script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Корзина</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        #cartForm {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        #resetButton {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        #resetButton:hover {
+            background-color: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .quantity {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .item-total {
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        #total {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 18px;
+        }
+
+        #change {
+            font-weight: bold;
+            color: #e67e22;
+            font-size: 18px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+
+        #receivedAmount {
+            width: 150px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        [type="submit"] {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            display: block;
+            margin: 25px auto 0;
+        }
+
+        [type="submit"]:hover {
+            background-color: #27ae60;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2ecc71;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
     <h1>Корзина</h1>
@@ -29,13 +280,14 @@
                 {% endfor %}
             </tbody>
         </table>
-        <p>Итого: <span id="total">0</span></p>
+        <p>Итого: <span id="total">0</span> ₽</p>
         <label for="receivedAmount">Получено от покупателя:</label>
         <input type="number" id="receivedAmount" name="receivedAmount" value="0" min="0" inputmode="numeric"><br><br>
-        <p>Сдача: <span id="change">0</span></p>
+        <p>Сдача: <span id="change">0</span> ₽</p>
         <button type="submit">Оформить заказ</button>
-
     </form>
+
+    <div class="notification" id="notification">Заказ оформлен!</div>
 
     <script>
         const quantityInputs = document.querySelectorAll('.quantity');
@@ -66,9 +318,10 @@
             let change = 0;
             if (receivedAmount >= total) {
                 change = receivedAmount - total;
-                            }
+            }
             document.getElementById('change').textContent = change;
         }
+
         document.getElementById('resetButton').addEventListener('click', function() {
             const quantityInputs = document.querySelectorAll('.quantity');
             quantityInputs.forEach(input => {
@@ -77,6 +330,7 @@
             document.getElementById('receivedAmount').value = 0;
             calculateTotal();
         });
+
         document.getElementById('cartForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const items = [];
@@ -90,6 +344,17 @@
             const total = parseInt(document.getElementById('total').textContent);
             const receivedAmount = parseInt(document.getElementById('receivedAmount').value);
             const change = parseInt(document.getElementById('change').textContent);
+
+            // Показываем уведомление
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+
+            // Скрываем уведомление через 2 секунды
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+
+            // Отправка данных на сервер
             fetch('/cass/sale', {
                 method: 'POST',
                 headers: {
