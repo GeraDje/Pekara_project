@@ -31,3 +31,9 @@ async def today_report(message: types.Message):
 async def week_report(message: types.Message):
     result = await ReceiptsDAO.get_sum_to_week()
     await message.reply(f"Сумма за неделю: {result}")
+
+@dp.message(F.text.lower() == "за месяц")
+@access_required
+async def mounth_report(message: types.Message):
+    result = await ReceiptsDAO.get_sum_mounth()
+    await message.reply(f"Сумма за месяц: {result}")

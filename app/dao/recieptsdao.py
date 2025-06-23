@@ -49,15 +49,6 @@ class ReceiptsDAO(BaseDAO):
 
     @classmethod
     async def get_sum_today(cls) -> float:
-        """
-        Получает сумму за текущий день (с 00:00:00 до 23:59:59 текущего дня)
-        с использованием SQLAlchemy 2.0 Core API
-
-        Returns:
-            float: Сумма за день или 0.0 если нет данных
-            None: В случае ошибки
-        """
-
         async with async_session_maker() as session:
             try:
                 sql_query = text(f""
@@ -71,4 +62,16 @@ class ReceiptsDAO(BaseDAO):
                 return None
 
 
-
+    @classmethod
+    async def get_sum_mounth(cls) -> float:
+        async with async_session_maker() as session:
+            try:
+                sql_query = text("""SELECT SUM(receipts.total_amount) 
+                                    FROM receipts 
+                                    WHERE receipts.created_at >= date_trunc('month', CURRENT_DATE)
+                                    AND receipts.created_at < date_trunc('month', CURRENT_DATE) + interval '1 month'""")
+                result = await session.execute(sql_query)
+                return result.scalar()
+            except Exception as e:
+                print(f"Ошибка при получении суммы за месяц: {e}")
+                return None
